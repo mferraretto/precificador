@@ -61,19 +61,21 @@
 
   <script>
     const tabela = document.querySelector("#tabelaResultados tbody");
+    function sanitize(valor) {
+  return parseFloat(String(valor).replace(',', '.')) || 0;
+}
     let produtos = JSON.parse(localStorage.getItem("produtos_precificados") || "[]");
 
     function calcularSalvar() {
       const nome = document.getElementById("nomeProduto").value;
-      const custo = parseFloat(document.getElementById("custoProduto").value || 0);
-      const precoShopee = (comissaoShopee >= 1) ? 0 : ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
-      const taxaShopee = parseFloat(document.getElementById("taxaShopee").value || 0);
-      const precoML = (comissaoML >= 1) ? 0 : ((custo + taxaML) / (1 - comissaoML)).toFixed(2);
-      const taxaML = parseFloat(document.getElementById("taxaML").value || 0);
+      const custo = sanitize(document.getElementById("custoProduto").value);
+const taxaShopee = sanitize(document.getElementById("taxaShopee").value);
+const comissaoShopee = sanitize(document.getElementById("comissaoShopee").value) / 100;
+const taxaML = sanitize(document.getElementById("taxaML").value);
+const comissaoML = sanitize(document.getElementById("comissaoML").value) / 100;
 
-      const precoShopee = ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
-      const precoML = ((custo + taxaML) / (1 - comissaoML)).toFixed(2);
 
+     
       const produto = { nome, custo: custo.toFixed(2), precoShopee, precoML };
       produtos.push(produto);
       localStorage.setItem("produtos_precificados", JSON.stringify(produtos));

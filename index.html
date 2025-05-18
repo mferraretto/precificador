@@ -65,11 +65,11 @@
 
     function calcularSalvar() {
       const nome = document.getElementById("nomeProduto").value;
-      const custo = parseFloat(document.getElementById("custoProduto").value);
-      const comissaoShopee = parseFloat(document.getElementById("comissaoShopee").value || 0) / 100;
-      const taxaShopee = parseFloat(document.getElementById("taxaShopee").value);
-      const comissaoML = parseFloat(document.getElementById("comissaoML").value || 0) / 100;
-      const taxaML = parseFloat(document.getElementById("taxaML").value);
+      const custo = parseFloat(document.getElementById("custoProduto").value || 0);
+      const precoShopee = (comissaoShopee >= 1) ? 0 : ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
+      const taxaShopee = parseFloat(document.getElementById("taxaShopee").value || 0);
+      const precoML = (comissaoML >= 1) ? 0 : ((custo + taxaML) / (1 - comissaoML)).toFixed(2);
+      const taxaML = parseFloat(document.getElementById("taxaML").value || 0);
 
       const precoShopee = ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
       const precoML = ((custo + taxaML) / (1 - comissaoML)).toFixed(2);

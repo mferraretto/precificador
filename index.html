@@ -66,9 +66,9 @@
     function calcularSalvar() {
       const nome = document.getElementById("nomeProduto").value;
       const custo = parseFloat(document.getElementById("custoProduto").value);
-      const comissaoShopee = parseFloat(document.getElementById("comissaoShopee").value) / 100;
+      const comissaoShopee = parseFloat(document.getElementById("comissaoShopee").value || 0) / 100;
       const taxaShopee = parseFloat(document.getElementById("taxaShopee").value);
-      const comissaoML = parseFloat(document.getElementById("comissaoML").value) / 100;
+      const comissaoML = parseFloat(document.getElementById("comissaoML").value || 0) / 100;
       const taxaML = parseFloat(document.getElementById("taxaML").value);
 
       const precoShopee = ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);

@@ -1,12 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Precificador Shopee e Mercado Livre</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.png">
-  <meta name="theme-color" content="#dc3545">
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" />
+  <meta name="theme-color" content="#dc3545" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
@@ -21,25 +22,25 @@
   <h1>Precificador Shopee e Mercado Livre</h1>
 
   <label>Nome do Produto:</label>
-  <input type="text" id="nomeProduto">
+  <input type="text" id="nomeProduto" />
 
   <label>Custo do Produto (R$):</label>
-  <input type="number" id="custoProduto" step="0.01">
+  <input type="number" id="custoProduto" step="0.01" />
 
   <div class="platform">
     <h3>Shopee</h3>
     <label>Comissão (%):</label>
-    <input type="number" id="comissaoShopee" step="0.01">
+    <input type="number" id="comissaoShopee" step="0.01" />
     <label>Taxa Fixa (R$):</label>
-    <input type="number" id="taxaShopee" step="0.01">
+    <input type="number" id="taxaShopee" step="0.01" />
   </div>
 
   <div class="platform">
     <h3>Mercado Livre</h3>
     <label>Comissão (%):</label>
-    <input type="number" id="comissaoML" step="0.01">
+    <input type="number" id="comissaoML" step="0.01" />
     <label>Taxa Fixa (R$):</label>
-    <input type="number" id="taxaML" step="0.01">
+    <input type="number" id="taxaML" step="0.01" />
   </div>
 
   <button onclick="calcularSalvar()">Calcular e Salvar</button>

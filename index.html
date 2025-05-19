@@ -203,16 +203,14 @@
 
     <table>
       <thead>
-        <tr>
-          <th>Produto</th>
-          <th>Custo</th>
-          <th>Shopee</th>
-          <th>Lucro S.</th>
-          <th>ML</th>
-          <th>Lucro ML</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
+  <tr>
+    <th>Produto</th>
+    <th>Custo</th>
+    <th>Shopee</th>
+    <th>ML</th>
+    <th>Ações</th>
+  </tr>
+</thead>
       <tbody id="tabela"></tbody>
     </table>
   </div>
@@ -299,7 +297,9 @@
     const lucroShopee = (precoShopee - custo).toFixed(2);
     const lucroML = (precoML - custo).toFixed(2);
 
-    const produto = { nome, custo: custo.toFixed(2), precoShopee, precoML, lucroShopee, lucroML };
+    const produto = {
+  nome, custo: custo.toFixed(2), precoShopee, precoML
+};
 
     if (editandoIndex >= 0) {
       produtos[editandoIndex] = produto;
@@ -335,26 +335,24 @@
     tbody.innerHTML = "";
     produtos.forEach((p, i) => {
       tbody.innerHTML += `
-        <tr>
-          <td>${p.nome}</td>
-          <td>R$ ${p.custo}</td>
-          <td>R$ ${p.precoShopee}</td>
-          <td>R$ ${p.lucroShopee}</td>
-          <td>R$ ${p.precoML}</td>
-          <td>R$ ${p.lucroML}</td>
-          <td style="white-space: nowrap;">
-            <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
-            <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-          </td>
-        </tr>`;
+       <tr>
+  <td>${p.nome}</td>
+  <td>R$ ${p.custo}</td>
+  <td>R$ ${p.precoShopee}</td>
+  <td>R$ ${p.precoML}</td>
+  <td style="white-space: nowrap;">
+    <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
+    <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+  </td>
+</tr>`;
     });
   }
 
   function exportarCSV() {
-    let csv = "Produto,Custo,Shopee,Lucro Shopee,ML,Lucro ML\n";
-    produtos.forEach(p => {
-      csv += `${p.nome},${p.custo},${p.precoShopee},${p.lucroShopee},${p.precoML},${p.lucroML}\n`;
-    });
+    let csv = "Produto,Custo,Shopee,ML\n";
+produtos.forEach(p => {
+  csv += `${p.nome},${p.custo},${p.precoShopee},${p.precoML}\n`;
+});
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

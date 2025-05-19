@@ -5,7 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Precificador Shopee/ML</title>
   <link rel="icon" href="icon-192.png" />
-  <button onclick="alternarModo()">🌙 / ☀️</button>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3SlnBN8OaF1-tMO1an88u5AIQ0LX-szw",
+      authDomain: "precificacao-a323b.firebaseapp.com",
+      projectId: "precificacao-a323b",
+      storageBucket: "precificacao-a323b.firebasestorage.app",
+      messagingSenderId: "278826767788",
+      appId: "1:278826767788:web:522f0db0304cb990d71609"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.salvarNoFirestore = async function(usuario, produtos) {
+      try {
+        await setDoc(doc(db, "usuarios", usuario), { produtos });
+      } catch (e) {
+        alert("Erro ao salvar no Firestore: " + e);
+      }
+    }
+
+    window.carregarDoFirestore = async function(usuario) {
+      try {
+        const snap = await getDoc(doc(db, "usuarios", usuario));
+        return snap.exists() ? snap.data().produtos : [];
+      } catch (e) {
+        alert("Erro ao carregar do Firestore: " + e);
+        return [];
+      }
+    }
+  </script>
+
   <style>
     :root {
       --bg: #f5f5f5;
@@ -14,6 +50,7 @@
       --accent: #dc3545;
       --accent-hover: #c82333;
       --border: #dee2e6;
+      --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     body.dark {
@@ -23,6 +60,7 @@
       --accent: #ff4d4f;
       --accent-hover: #e03131;
       --border: #444;
+      --shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
     }
 
     * {
@@ -36,33 +74,21 @@
       margin: auto;
       background-color: var(--bg);
       color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
     }
 
-    h1, h2 {
-      color: var(--accent);
-      text-align: center;
-    }
-
-    input {
-      margin-top: 6px;
-      margin-bottom: 16px;
+    input, button {
+      border-radius: 8px;
       padding: 10px;
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card);
-      color: var(--text);
     }
 
     button {
-      padding: 10px 16px;
-      margin: 5px 5px 10px 0;
-      border: none;
-      border-radius: 6px;
       background-color: var(--accent);
-      color: #fff;
+      color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
+      border: none;
     }
 
     button:hover {
@@ -71,71 +97,51 @@
 
     fieldset {
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 16px;
       background: var(--card);
       margin-bottom: 20px;
+      box-shadow: var(--shadow);
     }
 
-    legend {
-      color: var(--accent);
-      font-weight: bold;
-      padding: 0 8px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 15px;
-    }
-
-    #telaLogin {
-      text-align: center;
-      margin-top: 100px;
-    }
-
-    #logout {
-      float: right;
-      background: #6c757d;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card);
-      margin-top: 20px;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    th, td {
-      border: 1px solid var(--border);
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background: var(--accent);
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent);
       color: white;
+      font-size: 20px;
+      border: none;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 999;
     }
 
-    @media (max-width: 600px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
 
-      button {
-        width: 100%;
-      }
-
-      #logout {
-        float: none;
-        width: 100%;
-      }
+    .app-header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      color: var(--text);
     }
   </style>
 </head>
 <body>
+  <button class="theme-toggle" onclick="alternarModo()">🌙</button>
   <!-- TELA DE LOGIN -->
   <div id="telaLogin">
     <h2>Bem-vindo!</h2>
@@ -146,9 +152,15 @@
 
   <!-- APLICAÇÃO PRINCIPAL -->
   <div id="app" style="display:none">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h1>Precificador Shopee e Mercado Livre</h1>
-      <button id="logout" onclick="fazerLogout()">Sair</button>
+    <div class="app-header">
+      <h1><i class="fas fa-tags"></i> Precificador Shopee/ML</h1>
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span id="usuarioNomeHeader"></span>
+        <button id="logout" onclick="fazerLogout()" title="Sair">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
     </div>
 
     <label>Nome do Produto:</label>
@@ -185,9 +197,9 @@
       </div>
     </fieldset>
 
-    <button onclick="calcularSalvar()">Calcular e Salvar</button>
-    <button onclick="exportarCSV()">Exportar CSV</button>
-    <button onclick="exportarPDF()">Exportar PDF</button>
+    <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
+    <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+    <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
 
     <table>
       <thead>
@@ -204,8 +216,18 @@
       <tbody id="tabela"></tbody>
     </table>
   </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+  if (localStorage.getItem("modo") === "dark") {
+    document.body.classList.add("dark");
+  }
+
+  function alternarModo() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("modo", document.body.classList.contains("dark") ? "dark" : "light");
+  }
+
   let usuarioAtual = localStorage.getItem("usuario_nome");
   let produtos = [];
   let editandoIndex = -1;
@@ -227,16 +249,17 @@
     location.reload();
   }
 
-  function iniciarSistema() {
+  async function iniciarSistema() {
     document.getElementById("telaLogin").style.display = "none";
     document.getElementById("app").style.display = "block";
-    produtos = JSON.parse(localStorage.getItem(`produtos_${usuarioAtual}`) || "[]");
+    document.getElementById("usuarioNomeHeader").textContent = usuarioAtual;
+    produtos = await carregarDoFirestore(usuarioAtual);
     restaurarTaxas();
     renderizarTabela();
   }
 
-  function salvarProdutos() {
-    localStorage.setItem(`produtos_${usuarioAtual}`, JSON.stringify(produtos));
+  async function salvarProdutos() {
+    await salvarNoFirestore(usuarioAtual, produtos);
   }
 
   function salvarTaxas() {
@@ -319,9 +342,9 @@
           <td>R$ ${p.lucroShopee}</td>
           <td>R$ ${p.precoML}</td>
           <td>R$ ${p.lucroML}</td>
-          <td>
-            <button onclick="editarProduto(${i})">Editar</button>
-            <button onclick="excluirProduto(${i})">Excluir</button>
+          <td style="white-space: nowrap;">
+            <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
+            <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
           </td>
         </tr>`;
     });

@@ -138,6 +138,40 @@
       font-weight: bold;
       color: var(--text);
     }
+    .produtos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.card-produto {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  transition: transform 0.2s ease;
+}
+
+.card-produto:hover {
+  transform: translateY(-4px);
+}
+
+.card-produto h3 {
+  margin: 0 0 10px;
+  color: var(--accent);
+}
+
+.card-produto .precos p {
+  margin: 4px 0;
+}
+
+.card-produto .acoes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -201,18 +235,7 @@
     <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
     <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
 
-    <table>
-      <thead>
-  <tr>
-    <th>Produto</th>
-    <th>Custo</th>
-    <th>Shopee</th>
-    <th>ML</th>
-    <th>Ações</th>
-  </tr>
-</thead>
-      <tbody id="tabela"></tbody>
-    </table>
+    <div class="produtos-grid" id="produtosGrid"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -331,23 +354,25 @@
   }
 
   function renderizarTabela() {
-    const tbody = document.getElementById("tabela");
-    tbody.innerHTML = "";
-    produtos.forEach((p, i) => {
-      tbody.innerHTML += `
-       <tr>
-  <td>${p.nome}</td>
-  <td>R$ ${p.custo}</td>
-  <td>R$ ${p.precoShopee}</td>
-  <td>R$ ${p.precoML}</td>
-  <td style="white-space: nowrap;">
-    <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
-    <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-  </td>
-</tr>`;
-    });
-  }
-
+  const grid = document.getElementById("produtosGrid");
+  grid.innerHTML = "";
+  produtos.forEach((p, i) => {
+    grid.innerHTML += `
+      <div class="card-produto">
+        <h3>${p.nome}</h3>
+        <div class="precos">
+          <p><strong>Custo:</strong> R$ ${p.custo}</p>
+          <p><strong>Shopee:</strong> R$ ${p.precoShopee}</p>
+          <p><strong>ML:</strong> R$ ${p.precoML}</p>
+        </div>
+        <div class="acoes">
+          <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
+          <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    `;
+  });
+}
   function exportarCSV() {
     let csv = "Produto,Custo,Shopee,ML\n";
 produtos.forEach(p => {

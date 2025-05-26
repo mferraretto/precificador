@@ -447,7 +447,9 @@ function calcularSalvar() {
   document.getElementById("valorSobra").value = "";
 
   renderizarTabela();
+  renderizarTabelaComoTabela(); // 👉 adiciona esta linha
 }
+
 
 
   function excluirProduto(index) {

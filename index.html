@@ -269,7 +269,43 @@
       <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
     </div>
   </div>
-<!-- ABA TABELA -->
+
+  <fieldset>
+    <legend>Shopee</legend>
+    <div class="form-grid">
+      <div>
+        <label>Comissão (%):</label>
+        <input type="text" id="comissaoShopee" />
+      </div>
+      <div>
+        <label>Taxa Fixa (R$):</label>
+        <input type="text" id="taxaShopee" />
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Mercado Livre</legend>
+    <div class="form-grid">
+      <div>
+        <label>Comissão (%):</label>
+        <input type="text" id="comissaoML" />
+      </div>
+      <div>
+        <label>Taxa Fixa (R$):</label>
+        <input type="text" id="taxaML" />
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="acoes-botoes">
+    <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
+    <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+    <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+  </div>
+</div>
+
+<!-- ✅ ABA TABELA — FORA da div do formulário -->
 <div id="aba-tabela" style="display: none;">
   <table class="tabela-produtos">
     <thead>
@@ -286,40 +322,6 @@
     </thead>
     <tbody id="tabelaProdutos"></tbody>
   </table>
-</div>
-
-    <fieldset>
-      <legend>Shopee</legend>
-      <div class="form-grid">
-        <div>
-          <label>Comissão (%):</label>
-          <input type="text" id="comissaoShopee" />
-        </div>
-        <div>
-          <label>Taxa Fixa (R$):</label>
-          <input type="text" id="taxaShopee" />
-        </div>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend>Mercado Livre</legend>
-      <div class="form-grid">
-        <div>
-          <label>Comissão (%):</label>
-          <input type="text" id="comissaoML" />
-        </div>
-        <div>
-          <label>Taxa Fixa (R$):</label>
-          <input type="text" id="taxaML" />
-        </div>
-      </div>
-    </fieldset>
-
-   <div class="acoes-botoes">
-  <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
-  <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-  <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
 </div>
 
 
@@ -431,7 +433,9 @@ function calcularSalvar() {
   document.getElementById("codigoProduto").value = "";
   document.getElementById("valorSobra").value = "";
 
-  renderizarTabelaComoTabela(); // 👉 adiciona esta linha
+  renderizarTabelaComoTabela();
+  mostrarAba("tabela");
+// 👉 adiciona esta linha
 }
 
 
@@ -455,27 +459,6 @@ function calcularSalvar() {
 }
 
 
-function renderizarTabela() {
-  const grid = document.getElementById("produtosGrid");
-  grid.innerHTML = "";
-  produtos.forEach((p, i) => {
-    grid.innerHTML += `
-      <div class="card-produto">
-        <h3>${p.nome}</h3>
-        <div class="precos">
-          <p><strong>Código:</strong> ${p.codigo || "-"}</p>
-          <p><strong>Valor da Sobra:</strong> R$ ${p.valorSobra}</p>
-          <p><strong>Shopee:</strong> R$ ${p.precoShopee} (Lucro: R$ ${p.lucroShopee})</p>
-          <p><strong>ML:</strong> R$ ${p.precoML} (Lucro: R$ ${p.lucroML})</p>
-        </div>
-        <div class="acoes">
-          <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
-          <button onclick="excluirProduto(${i})" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-        </div>
-      </div>
-    `;
-  });
-}
 
   function exportarCSV() {
   let csv = "Produto,Código,Valor da Sobra,Shopee,Lucro Shopee,ML,Lucro ML\n";

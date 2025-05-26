@@ -337,9 +337,7 @@
 </div>
 
 
-    <div class="produtos-grid" id="produtosGrid"></div>
-  </div>
-
+   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   if (localStorage.getItem("modo") === "dark") {
@@ -446,7 +444,6 @@ function calcularSalvar() {
   document.getElementById("codigoProduto").value = "";
   document.getElementById("valorSobra").value = "";
 
-  renderizarTabela();
   renderizarTabelaComoTabela(); // 👉 adiciona esta linha
 }
 

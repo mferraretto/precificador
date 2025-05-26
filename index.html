@@ -148,85 +148,88 @@
       font-weight: bold;
       color: var(--text);
     }
-  
-.card-produto:hover {
-  transform: translateY(-4px);
-}
 
-.card-produto h3 {
-  margin: 0 0 10px;
-  color: var(--accent);
-}
+    .card-produto:hover {
+      transform: translateY(-4px);
+    }
 
-.card-produto .precos p {
-  margin: 4px 0;
-}
+    .card-produto h3 {
+      margin: 0 0 10px;
+      color: var(--accent);
+    }
 
-.card-produto .acoes {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-.form-linha {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
+    .card-produto .precos p {
+      margin: 4px 0;
+    }
 
-.form-linha .campo {
-  flex: 1 1 300px;
-  display: flex;
-  flex-direction: column;
-}
-.acoes-botoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 30px;
-}
-.abas {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+    .card-produto .acoes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
 
-.aba-btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: var(--accent);
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
+    .form-linha {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
 
-.aba-btn:hover {
-  background: var(--accent-hover);
-}
+    .form-linha .campo {
+      flex: 1 1 300px;
+      display: flex;
+      flex-direction: column;
+    }
 
-.tabela-produtos {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
+    .acoes-botoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
 
-.tabela-produtos th, .tabela-produtos td {
-  padding: 10px;
-  border: 1px solid var(--border);
-  text-align: left;
-}
+    .abas {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-.tabela-produtos th {
-  background: var(--accent);
-  color: white;
-}
+    .aba-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
+    .aba-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .tabela-produtos {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .tabela-produtos th, .tabela-produtos td {
+      padding: 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .tabela-produtos th {
+      background: var(--accent);
+      color: white;
+    }
   </style>
 </head>
+
 <body>
   <button class="theme-toggle" onclick="alternarModo()">🌙</button>
   <!-- TELA DE LOGIN -->
@@ -250,88 +253,87 @@
       </div>
     </div>
 
-   <div class="abas">
-    <button class="aba-btn" onclick="mostrarAba('formulario')">🧮 Precificador</button>
-    <button class="aba-btn" onclick="mostrarAba('shopee')">📦 Shopee</button>
-    <button class="aba-btn" onclick="mostrarAba('ml')">📦 Mercado Livre</button>
-  </div>
+    <div class="abas">
+      <button class="aba-btn" onclick="mostrarAba('formulario')">🧮 Precificador</button>
+      <button class="aba-btn" onclick="mostrarAba('shopee')">📦 Shopee</button>
+      <button class="aba-btn" onclick="mostrarAba('ml')">📦 Mercado Livre</button>
+    </div>
 
-  <div id="aba-shopee" style="display: none">
-    <h2>Lista Shopee</h2>
-    <table class="tabela-produtos">
-      <thead>
-        <tr>
-          <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="listaShopee"></tbody>
-    </table>
-  </div>
-
-  <div id="aba-ml" style="display: none">
-    <h2>Lista Mercado Livre</h2>
-    <table class="tabela-produtos">
-      <thead>
-        <tr>
-          <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="listaML"></tbody>
-    </table>
-  </div>
-  <fieldset>
-    <legend>Shopee</legend>
-    <div class="form-grid">
-      <div>
-        <label>Comissão (%):</label>
-        <input type="text" id="comissaoShopee" />
+    <div id="aba-formulario">
+      <div class="form-linha">
+        <div class="campo">
+          <label>Nome do Produto:</label>
+          <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
+        </div>
+        <div class="campo">
+          <label>Cod. do Produto:</label>
+          <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
+        </div>
+        <div class="campo">
+          <label>Valor da Sobra (R$):</label>
+          <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
+        </div>
       </div>
-      <div>
-        <label>Taxa Fixa (R$):</label>
-        <input type="text" id="taxaShopee" />
+
+      <fieldset>
+        <legend>Shopee</legend>
+        <div class="form-grid">
+          <div>
+            <label>Comissão (%):</label>
+            <input type="text" id="comissaoShopee" />
+          </div>
+          <div>
+            <label>Taxa Fixa (R$):</label>
+            <input type="text" id="taxaShopee" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Mercado Livre</legend>
+        <div class="form-grid">
+          <div>
+            <label>Comissão (%):</label>
+            <input type="text" id="comissaoML" />
+          </div>
+          <div>
+            <label>Taxa Fixa (R$):</label>
+            <input type="text" id="taxaML" />
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="acoes-botoes">
+        <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
+        <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+        <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
       </div>
     </div>
-  </fieldset>
 
-  <fieldset>
-    <legend>Mercado Livre</legend>
-    <div class="form-grid">
-      <div>
-        <label>Comissão (%):</label>
-        <input type="text" id="comissaoML" />
-      </div>
-      <div>
-        <label>Taxa Fixa (R$):</label>
-        <input type="text" id="taxaML" />
-      </div>
+    <!-- Listas separadas -->
+    <div id="aba-shopee" style="display: none">
+      <h2>Lista Shopee</h2>
+      <table class="tabela-produtos">
+        <thead>
+          <tr>
+            <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="listaShopee"></tbody>
+      </table>
     </div>
-  </fieldset>
 
-  <div class="acoes-botoes">
-    <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
-    <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-    <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
-  </div>
-</div>
-
-<!-- ✅ ABA TABELA — FORA da div do formulário -->
-<div id="aba-tabela" style="display: none;">
-  <table class="tabela-produtos">
-    <thead>
-      <tr>
-        <th>Produto</th>
-        <th>Código</th>
-        <th>Valor da Sobra</th>
-        <th>Shopee</th>
-        <th>Lucro Shopee</th>
-        <th>ML</th>
-        <th>Lucro ML</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="tabelaProdutos"></tbody>
-  </table>
-</div>
+    <div id="aba-ml" style="display: none">
+      <h2>Lista Mercado Livre</h2>
+      <table class="tabela-produtos">
+        <thead>
+          <tr>
+            <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="listaML"></tbody>
+      </table>
+    </div>
 
 
    

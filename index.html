@@ -449,9 +449,9 @@ function calcularSalvar() {
   const codigo = document.getElementById("codigoProduto").value.trim();
   const sobra = sanitize(document.getElementById("valorSobra").value);
   const taxaShopee = sanitize(document.getElementById("taxaShopee").value);
-  const comissaoShopee = sanitize(document.getElementById("comissaoShopee").value) / 100;
+  const comissaoShopee = sanitize(document.getElementById("comissaoShopee").value);
   const taxaML = sanitize(document.getElementById("taxaML").value);
-  const comissaoML = sanitize(document.getElementById("comissaoML").value) / 100;
+  const comissaoML = sanitize(document.getElementById("comissaoML").value);
 
   if (!nome || !codigo || sobra <= 0) {
     alert("Preencha corretamente todos os campos.");
@@ -460,27 +460,28 @@ function calcularSalvar() {
 
   salvarTaxas();
 
-  const precoShopee = ((sobra + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
-  const precoML = ((sobra + taxaML) / (1 - comissaoML)).toFixed(2);
+  const precoShopee = ((sobra + taxaShopee) / (1 - comissaoShopee / 100)).toFixed(2);
+  const precoML = ((sobra + taxaML) / (1 - comissaoML / 100)).toFixed(2);
   const lucroShopee = (precoShopee - sobra).toFixed(2);
   const lucroML = (precoML - sobra).toFixed(2);
 
   const produtoShopee = {
-  nome, codigo,
-  preco: precoShopee,
-  taxa: taxaShopee.toFixed(2),
-  comissao: (comissaoShopee * 100).toFixed(2),
-  valorSobra: sobra.toFixed(2),
-  lucro: lucroShopee
-};
-
+    nome,
+    codigo,
+    preco: precoShopee,
+    taxa: taxaShopee.toFixed(2),
+    comissao: comissaoShopee.toFixed(2),
+    valorSobra: sobra.toFixed(2),
+    lucro: lucroShopee
+  };
 
   const produtoML = {
-    nome, codigo,
+    nome,
+    codigo,
     preco: precoML,
     taxa: taxaML.toFixed(2),
-    comissao: (comissaoML * 100).toFixed(2),
-  valorSobra: sobra.toFixed(2),
+    comissao: comissaoML.toFixed(2),
+    valorSobra: sobra.toFixed(2),
     lucro: lucroML
   };
 
@@ -496,6 +497,7 @@ function calcularSalvar() {
   renderizarTabelas();
   mostrarAba("shopee");
 }
+
 
 function renderizarTabelas() {
   const tbodyShopee = document.getElementById("listaShopee");

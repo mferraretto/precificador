@@ -521,28 +521,6 @@ function mostrarAba(qual) {
 
 if (usuarioAtual) iniciarSistema();
 
-function renderizarTabelaComoTabela() {
-  const tbodyShopee = document.getElementById("listaShopee");
-  const tbodyML = document.getElementById("listaML");
-  tbodyShopee.innerHTML = "";
-  tbodyML.innerHTML = "";
-
-  produtos.forEach((p, i) => {
-    tbodyShopee.innerHTML += `
-      <tr>
-        <td>${p.nome}</td><td>${p.codigo}</td><td>${p.valorSobra}</td>
-        <td>${p.precoShopee}</td><td>${p.lucroShopee}</td>
-        <td><button onclick="editarProduto(${i})">✏️</button> <button onclick="excluirProduto(${i})">🗑</button></td>
-      </tr>`;
-
-    tbodyML.innerHTML += `
-      <tr>
-        <td>${p.nome}</td><td>${p.codigo}</td><td>${p.valorSobra}</td>
-        <td>${p.precoML}</td><td>${p.lucroML}</td>
-        <td><button onclick="editarProduto(${i})">✏️</button> <button onclick="excluirProduto(${i})">🗑</button></td>
-      </tr>`;
-  });
-}
 
 
 </script>

@@ -197,6 +197,45 @@
   gap: 10px;
   margin-bottom: 30px;
 }
+.abas {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.aba-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.aba-btn:hover {
+  background: var(--accent-hover);
+}
+
+.tabela-produtos {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.tabela-produtos th, .tabela-produtos td {
+  padding: 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.tabela-produtos th {
+  background: var(--accent);
+  color: white;
+}
 
   </style>
 </head>
@@ -223,20 +262,46 @@
       </div>
     </div>
 
-    <div class="form-linha">
-  <div class="campo">
-    <label>Cod. do Produto:</label>
-    <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
-  </div>
-    <div class="campo">
-    <label>Nome do Produto:</label>
-    <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
-  </div>
-  <div class="campo">
-    <label>Valor da Sobra (R$):</label>
-    <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
-  </div>
+   <div class="abas">
+  <button class="aba-btn" onclick="mostrarAba('formulario')">🧮 Precificador</button>
+  <button class="aba-btn" onclick="mostrarAba('tabela')">📋 Lista de Produtos</button>
 </div>
+
+<!-- ABA FORMULÁRIO -->
+<div id="aba-formulario">
+  <div class="form-linha">
+    <div class="campo">
+      <label>Nome do Produto:</label>
+      <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
+    </div>
+    <div class="campo">
+      <label>Cod. do Produto:</label>
+      <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
+    </div>
+    <div class="campo">
+      <label>Valor da Sobra (R$):</label>
+      <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
+    </div>
+  </div>
+<!-- ABA TABELA -->
+<div id="aba-tabela" style="display: none;">
+  <table class="tabela-produtos">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Código</th>
+        <th>Valor da Sobra</th>
+        <th>Shopee</th>
+        <th>Lucro Shopee</th>
+        <th>ML</th>
+        <th>Lucro ML</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaProdutos"></tbody>
+  </table>
+</div>
+
     <fieldset>
       <legend>Shopee</legend>
       <div class="form-grid">
@@ -483,6 +548,34 @@ function renderizarTabela() {
 }
 
   if (usuarioAtual) iniciarSistema();
+  function mostrarAba(qual) {
+  document.getElementById("aba-formulario").style.display = qual === "formulario" ? "block" : "none";
+  document.getElementById("aba-tabela").style.display = qual === "tabela" ? "block" : "none";
+  if (qual === "tabela") renderizarTabelaComoTabela();
+}
+
+function renderizarTabelaComoTabela() {
+  const tbody = document.getElementById("tabelaProdutos");
+  tbody.innerHTML = "";
+  produtos.forEach((p, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.nome}</td>
+        <td>${p.codigo || "-"}</td>
+        <td>R$ ${p.valorSobra}</td>
+        <td>R$ ${p.precoShopee}</td>
+        <td>R$ ${p.lucroShopee}</td>
+        <td>R$ ${p.precoML}</td>
+        <td>R$ ${p.lucroML}</td>
+        <td>
+          <button onclick="editarProduto(${i})"><i class="fas fa-edit"></i></button>
+          <button onclick="excluirProduto(${i})"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
 </script>
 </body>
 </html>

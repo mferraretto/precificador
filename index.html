@@ -259,48 +259,77 @@
       <button class="aba-btn" onclick="mostrarAba('ml')">📦 Mercado Livre</button>
     </div>
 
-    <div id="aba-formulario">
-      <div class="form-linha">
-        <div class="campo">
-          <label>Nome do Produto:</label>
-          <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
-        </div>
-        <div class="campo">
-          <label>Cod. do Produto:</label>
-          <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
-        </div>
-        <div class="campo">
-          <label>Valor da Sobra (R$):</label>
-          <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
-        </div>
+    <!-- ABA FORMULÁRIO -->
+<div id="aba-formulario">
+  <div class="form-linha">
+    <div class="campo">
+      <label>Nome do Produto:</label>
+      <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
+    </div>
+    <div class="campo">
+      <label>Cod. do Produto:</label>
+      <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
+    </div>
+    <div class="campo">
+      <label>Valor da Sobra (R$):</label>
+      <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
+    </div>
+  </div>
+
+  <fieldset>
+    <legend>Shopee</legend>
+    <div class="form-grid">
+      <div>
+        <label>Comissão (%):</label>
+        <input type="text" id="comissaoShopee" />
       </div>
+      <div>
+        <label>Taxa Fixa (R$):</label>
+        <input type="text" id="taxaShopee" />
+      </div>
+    </div>
+  </fieldset>
 
-      <fieldset>
-        <legend>Shopee</legend>
-        <div class="form-grid">
-          <div>
-            <label>Comissão (%):</label>
-            <input type="text" id="comissaoShopee" />
-          </div>
-          <div>
-            <label>Taxa Fixa (R$):</label>
-            <input type="text" id="taxaShopee" />
-          </div>
-        </div>
-      </fieldset>
+  <fieldset>
+    <legend>Mercado Livre</legend>
+    <div class="form-grid">
+      <div>
+        <label>Comissão (%):</label>
+        <input type="text" id="comissaoML" />
+      </div>
+      <div>
+        <label>Taxa Fixa (R$):</label>
+        <input type="text" id="taxaML" />
+      </div>
+    </div>
+  </fieldset>
 
-      <fieldset>
-        <legend>Mercado Livre</legend>
-        <div class="form-grid">
-          <div>
-            <label>Comissão (%):</label>
-            <input type="text" id="comissaoML" />
-          </div>
-          <div>
-            <label>Taxa Fixa (R$):</label>
-            <input type="text" id="taxaML" />
-          </div>
-        </div>
+  <div class="acoes-botoes">
+    <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
+    <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+    <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+  </div>
+</div>
+
+<!-- ✅ ABA TABELA — FORA da div do formulário -->
+<div id="aba-tabela" style="display: none;">
+  <table class="tabela-produtos">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Código</th>
+        <th>Valor da Sobra</th>
+        <th>Shopee</th>
+        <th>Lucro Shopee</th>
+        <th>ML</th>
+        <th>Lucro ML</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaProdutos"></tbody>
+  </table>
+</div>
+    </div>
       </fieldset>
 
       <div class="acoes-botoes">

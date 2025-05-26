@@ -333,29 +333,45 @@
       
 
     <!-- Listas separadas -->
-    <div id="aba-shopee" style="display: none">
-      <h2>Lista Shopee</h2>
-      <table class="tabela-produtos">
-        <thead>
-          <tr>
-            <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="listaShopee"></tbody>
-      </table>
-    </div>
+   <div id="aba-shopee" style="display: none">
+  <h2>Lista Shopee</h2>
+  <table class="tabela-produtos">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Produto</th>
+        <th>Preço</th>
+        <th>Taxa Fixa (R$)</th>
+        <th>Comissão (%)</th>
+        <th>Sobra</th>
+        <th>Lucro</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="listaShopee"></tbody>
+  </table>
+</div>
+
 
     <div id="aba-ml" style="display: none">
-      <h2>Lista Mercado Livre</h2>
-      <table class="tabela-produtos">
-        <thead>
-          <tr>
-            <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="listaML"></tbody>
-      </table>
-    </div>
+  <h2>Lista Mercado Livre</h2>
+  <table class="tabela-produtos">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Produto</th>
+        <th>Preço</th>
+        <th>Taxa Fixa (R$)</th>
+        <th>Comissão (%)</th>
+        <th>Sobra</th>
+        <th>Lucro</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="listaML"></tbody>
+  </table>
+</div>
+
 
 
    
@@ -450,10 +466,12 @@ function calcularSalvar() {
   const lucroML = (precoML - sobra).toFixed(2);
 
   const produtoShopee = {
-    nome, codigo, valorSobra: sobra.toFixed(2),
-    preco: precoShopee,
-    lucro: lucroShopee
-  };
+  nome, codigo, valorSobra: sobra.toFixed(2),
+  preco: precoShopee,
+  lucro: lucroShopee,
+  taxa: taxaShopee.toFixed(2),
+  comissao: (comissaoShopee * 100).toFixed(2)
+};
 
   const produtoML = {
     nome, codigo, valorSobra: sobra.toFixed(2),

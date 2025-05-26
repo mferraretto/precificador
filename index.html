@@ -371,13 +371,14 @@
   }
 
   async function iniciarSistema() {
-    document.getElementById("telaLogin").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    document.getElementById("usuarioNomeHeader").textContent = usuarioAtual;
-    produtos = await carregarDoFirestore(usuarioAtual);
-    restaurarTaxas();
-    renderizarTabela();
-  }
+  document.getElementById("telaLogin").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("usuarioNomeHeader").textContent = usuarioAtual;
+  produtos = await carregarDoFirestore(usuarioAtual);
+  restaurarTaxas();
+  renderizarTabelaComoTabela(); // ✅ usar apenas essa
+}
+
 
   async function salvarProdutos() {
     await salvarNoFirestore(usuarioAtual, produtos);
@@ -450,12 +451,13 @@ function calcularSalvar() {
 
 
   function excluirProduto(index) {
-    if (confirm("Deseja excluir este produto?")) {
-      produtos.splice(index, 1);
-      salvarProdutos();
-      renderizarTabela();
-    }
+  if (confirm("Deseja excluir este produto?")) {
+    produtos.splice(index, 1);
+    salvarProdutos();
+    renderizarTabelaComoTabela(); // ✅ atualiza apenas a tabela
   }
+}
+
 
   function editarProduto(index) {
   const p = produtos[index];

@@ -206,10 +206,13 @@
     </div>
 
     <label>Nome do Produto:</label>
-    <input type="text" id="nomeProduto" />
+<input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
 
-    <label>Custo do Produto (R$):</label>
-    <input type="text" id="custoProduto" />
+<label>Cod. do Produto:</label>
+<input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
+
+<label>Valor da Sobra (R$):</label>
+<input type="text" id="valorSobra" placeholder="Ex: 5.75" />
 
     <fieldset>
       <legend>Shopee</legend>
@@ -308,42 +311,53 @@
     if (config.taxaML) document.getElementById("taxaML").value = config.taxaML;
   }
 
-  function calcularSalvar() {
-    const nome = document.getElementById("nomeProduto").value.trim();
-    const custo = sanitize(document.getElementById("custoProduto").value);
-    const taxaShopee = sanitize(document.getElementById("taxaShopee").value);
-    const comissaoShopee = sanitize(document.getElementById("comissaoShopee").value) / 100;
-    const taxaML = sanitize(document.getElementById("taxaML").value);
-    const comissaoML = sanitize(document.getElementById("comissaoML").value) / 100;
+function calcularSalvar() {
+  const nome = document.getElementById("nomeProduto").value.trim();
+  const codigo = document.getElementById("codigoProduto").value.trim();
+  const sobra = sanitize(document.getElementById("valorSobra").value);
+  const taxaShopee = sanitize(document.getElementById("taxaShopee").value);
+  const comissaoShopee = sanitize(document.getElementById("comissaoShopee").value) / 100;
+  const taxaML = sanitize(document.getElementById("taxaML").value);
+  const comissaoML = sanitize(document.getElementById("comissaoML").value) / 100;
 
-    if (!nome || custo <= 0) {
-      alert("Preencha corretamente os campos.");
-      return;
-    }
-
-    salvarTaxas();
-
-    const precoShopee = ((custo + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
-    const precoML = ((custo + taxaML) / (1 - comissaoML)).toFixed(2);
-    const lucroShopee = (precoShopee - custo).toFixed(2);
-    const lucroML = (precoML - custo).toFixed(2);
-
-    const produto = {
-  nome, custo: custo.toFixed(2), precoShopee, precoML
-};
-
-    if (editandoIndex >= 0) {
-      produtos[editandoIndex] = produto;
-      editandoIndex = -1;
-    } else {
-      produtos.push(produto);
-    }
-
-    salvarProdutos();
-    document.getElementById("nomeProduto").value = "";
-    document.getElementById("custoProduto").value = "";
-    renderizarTabela();
+  if (!nome || !codigo || sobra <= 0) {
+    alert("Preencha corretamente todos os campos.");
+    return;
   }
+
+  salvarTaxas();
+
+  const precoShopee = ((sobra + taxaShopee) / (1 - comissaoShopee)).toFixed(2);
+  const precoML = ((sobra + taxaML) / (1 - comissaoML)).toFixed(2);
+  const lucroShopee = (precoShopee - sobra).toFixed(2);
+  const lucroML = (precoML - sobra).toFixed(2);
+
+  const produto = {
+    nome,
+    codigo,
+    valorSobra: sobra.toFixed(2),
+    precoShopee,
+    precoML,
+    lucroShopee,
+    lucroML
+  };
+
+  if (editandoIndex >= 0) {
+    produtos[editandoIndex] = produto;
+    editandoIndex = -1;
+  } else {
+    produtos.push(produto);
+  }
+
+  salvarProdutos();
+
+  document.getElementById("nomeProduto").value = "";
+  document.getElementById("codigoProduto").value = "";
+  document.getElementById("valorSobra").value = "";
+
+  renderizarTabela();
+}
+
 
   function excluirProduto(index) {
     if (confirm("Deseja excluir este produto?")) {
@@ -354,14 +368,16 @@
   }
 
   function editarProduto(index) {
-    const p = produtos[index];
-    document.getElementById("nomeProduto").value = p.nome;
-    document.getElementById("custoProduto").value = p.custo;
-    editandoIndex = index;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  const p = produtos[index];
+  document.getElementById("nomeProduto").value = p.nome;
+  document.getElementById("codigoProduto").value = p.codigo || "";
+  document.getElementById("valorSobra").value = p.valorSobra;
+  editandoIndex = index;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  function renderizarTabela() {
+
+function renderizarTabela() {
   const grid = document.getElementById("produtosGrid");
   grid.innerHTML = "";
   produtos.forEach((p, i) => {
@@ -369,9 +385,10 @@
       <div class="card-produto">
         <h3>${p.nome}</h3>
         <div class="precos">
-          <p><strong>Custo:</strong> R$ ${p.custo}</p>
-          <p><strong>Shopee:</strong> R$ ${p.precoShopee}</p>
-          <p><strong>ML:</strong> R$ ${p.precoML}</p>
+          <p><strong>Código:</strong> ${p.codigo || "-"}</p>
+          <p><strong>Valor da Sobra:</strong> R$ ${p.valorSobra}</p>
+          <p><strong>Shopee:</strong> R$ ${p.precoShopee} (Lucro: R$ ${p.lucroShopee})</p>
+          <p><strong>ML:</strong> R$ ${p.precoML} (Lucro: R$ ${p.lucroML})</p>
         </div>
         <div class="acoes">
           <button onclick="editarProduto(${i})" title="Editar"><i class="fas fa-edit"></i></button>
@@ -381,54 +398,63 @@
     `;
   });
 }
+
   function exportarCSV() {
-    let csv = "Produto,Custo,Shopee,ML\n";
-produtos.forEach(p => {
-  csv += `${p.nome},${p.custo},${p.precoShopee},${p.precoML}\n`;
-});
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `produtos_${usuarioAtual}.csv`;
-    link.click();
-  }
+  let csv = "Produto,Código,Valor da Sobra,Shopee,Lucro Shopee,ML,Lucro ML\n";
+  produtos.forEach(p => {
+    csv += `${p.nome},${p.codigo},${p.valorSobra},${p.precoShopee},${p.lucroShopee},${p.precoML},${p.lucroML}\n`;
+  });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `produtos_${usuarioAtual}.csv`;
+  link.click();
+}
 
   function exportarPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const margem = 10;
-    const largura = 190 / 6;
-    let y = 20;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const margem = 10;
+  const largura = 190 / 7;
+  let y = 20;
 
-    doc.setFontSize(14);
-    doc.setTextColor(220, 53, 69);
-    doc.text(`Produtos de ${usuarioAtual}`, margem, 10);
+  doc.setFontSize(14);
+  doc.setTextColor(220, 53, 69);
+  doc.text(`Produtos de ${usuarioAtual}`, margem, 10);
 
-    const colunas = ["Produto", "Custo", "Shopee", "Lucro S.", "ML", "Lucro ML"];
-    doc.setFillColor(220, 53, 69);
-    doc.setTextColor(255, 255, 255);
-    colunas.forEach((t, i) => {
-      doc.rect(margem + i * largura, y, largura, 10, "F");
-      doc.text(t, margem + i * largura + 2, y + 7);
+  const colunas = ["Produto", "Código", "Sobra", "Shopee", "Lucro S.", "ML", "Lucro ML"];
+  doc.setFillColor(220, 53, 69);
+  doc.setTextColor(255, 255, 255);
+  colunas.forEach((t, i) => {
+    doc.rect(margem + i * largura, y, largura, 10, "F");
+    doc.text(t, margem + i * largura + 2, y + 7);
+  });
+
+  y += 12;
+  doc.setTextColor(0, 0, 0);
+
+  produtos.forEach((p, i) => {
+    const dados = [
+      p.nome,
+      p.codigo || "-",
+      p.valorSobra,
+      p.precoShopee,
+      p.lucroShopee,
+      p.precoML,
+      p.lucroML
+    ];
+    dados.forEach((dado, j) => {
+      doc.text(`${dado}`, margem + j * largura + 2, y);
     });
+    y += 8;
+    if (y > 280) {
+      doc.addPage();
+      y = 20;
+    }
+  });
 
-    y += 12;
-    doc.setTextColor(0, 0, 0);
-
-    produtos.forEach((p, i) => {
-      const dados = [p.nome, p.custo, p.precoShopee, p.lucroShopee, p.precoML, p.lucroML];
-      dados.forEach((dado, j) => {
-        doc.text(`${dado}`, margem + j * largura + 2, y);
-      });
-      y += 8;
-      if (y > 280) {
-        doc.addPage();
-        y = 20;
-      }
-    });
-
-    doc.save(`produtos_${usuarioAtual}.pdf`);
-  }
+  doc.save(`produtos_${usuarioAtual}.pdf`);
+}
 
   if (usuarioAtual) iniciarSistema();
 </script>

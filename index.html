@@ -339,66 +339,73 @@
    
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  if (localStorage.getItem("modo") === "dark") {
-    document.body.classList.add("dark");
-  }
 
-  function alternarModo() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("modo", document.body.classList.contains("dark") ? "dark" : "light");
-  }
+if (localStorage.getItem("modo") === "dark") {
+  document.body.classList.add("dark");
+}
 
-  let usuarioAtual = localStorage.getItem("usuario_nome");
-  let produtos = [];
-  let editandoIndex = -1;
+function alternarModo() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("modo", document.body.classList.contains("dark") ? "dark" : "light");
+}
 
-  function sanitize(valor) {
-    return parseFloat(String(valor).replace(',', '.')) || 0;
-  }
+let usuarioAtual = localStorage.getItem("usuario_nome");
+let produtosShopee = [];
+let produtosML = [];
+let editandoIndex = -1;
 
-  function fazerLogin() {
-    const nome = document.getElementById("nomeUsuario").value.trim();
-    if (!nome) return alert("Digite seu nome.");
-    usuarioAtual = nome;
-    localStorage.setItem("usuario_nome", nome);
-    iniciarSistema();
-  }
+function sanitize(valor) {
+  return parseFloat(String(valor).replace(',', '.')) || 0;
+}
 
-  function fazerLogout() {
-    localStorage.removeItem("usuario_nome");
-    location.reload();
-  }
+function fazerLogin() {
+  const nome = document.getElementById("nomeUsuario").value.trim();
+  if (!nome) return alert("Digite seu nome.");
+  usuarioAtual = nome;
+  localStorage.setItem("usuario_nome", nome);
+  iniciarSistema();
+}
 
-  async function iniciarSistema() {
+function fazerLogout() {
+  localStorage.removeItem("usuario_nome");
+  location.reload();
+}
+
+async function iniciarSistema() {
   document.getElementById("telaLogin").style.display = "none";
   document.getElementById("app").style.display = "block";
   document.getElementById("usuarioNomeHeader").textContent = usuarioAtual;
-  produtos = await carregarDoFirestore(usuarioAtual);
+
+  const dados = await carregarDoFirestore(usuarioAtual);
+  produtosShopee = dados.shopee || [];
+  produtosML = dados.ml || [];
   restaurarTaxas();
-  renderizarTabelaComoTabela(); // ✅ usar apenas essa
+  renderizarTabelas();
 }
 
+async function salvarProdutos() {
+  await salvarNoFirestore(usuarioAtual, {
+    shopee: produtosShopee,
+    ml: produtosML
+  });
+}
 
-  async function salvarProdutos() {
-    await salvarNoFirestore(usuarioAtual, produtos);
-  }
+function salvarTaxas() {
+  localStorage.setItem(`taxas_${usuarioAtual}`, JSON.stringify({
+    comissaoShopee: document.getElementById("comissaoShopee").value,
+    taxaShopee: document.getElementById("taxaShopee").value,
+    comissaoML: document.getElementById("comissaoML").value,
+    taxaML: document.getElementById("taxaML").value
+  }));
+}
 
-  function salvarTaxas() {
-    localStorage.setItem(`taxas_${usuarioAtual}`, JSON.stringify({
-      comissaoShopee: document.getElementById("comissaoShopee").value,
-      taxaShopee: document.getElementById("taxaShopee").value,
-      comissaoML: document.getElementById("comissaoML").value,
-      taxaML: document.getElementById("taxaML").value
-    }));
-  }
-
-  function restaurarTaxas() {
-    const config = JSON.parse(localStorage.getItem(`taxas_${usuarioAtual}`) || "{}");
-    if (config.comissaoShopee) document.getElementById("comissaoShopee").value = config.comissaoShopee;
-    if (config.taxaShopee) document.getElementById("taxaShopee").value = config.taxaShopee;
-    if (config.comissaoML) document.getElementById("comissaoML").value = config.comissaoML;
-    if (config.taxaML) document.getElementById("taxaML").value = config.taxaML;
-  }
+function restaurarTaxas() {
+  const config = JSON.parse(localStorage.getItem(`taxas_${usuarioAtual}`) || "{}");
+  if (config.comissaoShopee) document.getElementById("comissaoShopee").value = config.comissaoShopee;
+  if (config.taxaShopee) document.getElementById("taxaShopee").value = config.taxaShopee;
+  if (config.comissaoML) document.getElementById("comissaoML").value = config.comissaoML;
+  if (config.taxaML) document.getElementById("taxaML").value = config.taxaML;
+}
 
 function calcularSalvar() {
   const nome = document.getElementById("nomeProduto").value.trim();
@@ -421,22 +428,20 @@ function calcularSalvar() {
   const lucroShopee = (precoShopee - sobra).toFixed(2);
   const lucroML = (precoML - sobra).toFixed(2);
 
-  const produto = {
-    nome,
-    codigo,
-    valorSobra: sobra.toFixed(2),
-    precoShopee,
-    precoML,
-    lucroShopee,
-    lucroML
+  const produtoShopee = {
+    nome, codigo, valorSobra: sobra.toFixed(2),
+    preco: precoShopee,
+    lucro: lucroShopee
   };
 
-  if (editandoIndex >= 0) {
-    produtos[editandoIndex] = produto;
-    editandoIndex = -1;
-  } else {
-    produtos.push(produto);
-  }
+  const produtoML = {
+    nome, codigo, valorSobra: sobra.toFixed(2),
+    preco: precoML,
+    lucro: lucroML
+  };
+
+  produtosShopee.push(produtoShopee);
+  produtosML.push(produtoML);
 
   salvarProdutos();
 
@@ -444,102 +449,56 @@ function calcularSalvar() {
   document.getElementById("codigoProduto").value = "";
   document.getElementById("valorSobra").value = "";
 
-  renderizarTabelaComoTabela();
-  mostrarAba("tabela");
-// 👉 adiciona esta linha
+  renderizarTabelas();
+  mostrarAba("shopee");
 }
 
+function renderizarTabelas() {
+  const tbodyShopee = document.getElementById("listaShopee");
+  const tbodyML = document.getElementById("listaML");
+  tbodyShopee.innerHTML = "";
+  tbodyML.innerHTML = "";
 
-
-  function excluirProduto(index) {
-  if (confirm("Deseja excluir este produto?")) {
-    produtos.splice(index, 1);
-    salvarProdutos();
-    renderizarTabelaComoTabela(); // ✅ atualiza apenas a tabela
-  }
-}
-
-
-  function editarProduto(index) {
-  const p = produtos[index];
-  document.getElementById("nomeProduto").value = p.nome;
-  document.getElementById("codigoProduto").value = p.codigo || "";
-  document.getElementById("valorSobra").value = p.valorSobra;
-  editandoIndex = index;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-
-
-  function exportarCSV() {
-  let csv = "Produto,Código,Valor da Sobra,Shopee,Lucro Shopee,ML,Lucro ML\n";
-  produtos.forEach(p => {
-    csv += `${p.nome},${p.codigo},${p.valorSobra},${p.precoShopee},${p.lucroShopee},${p.precoML},${p.lucroML}\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `produtos_${usuarioAtual}.csv`;
-  link.click();
-}
-
-  function exportarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const margem = 10;
-  const largura = 190 / 7;
-  let y = 20;
-
-  doc.setFontSize(14);
-  doc.setTextColor(220, 53, 69);
-  doc.text(`Produtos de ${usuarioAtual}`, margem, 10);
-
-  const colunas = ["Produto", "Código", "Sobra", "Shopee", "Lucro S.", "ML", "Lucro ML"];
-  doc.setFillColor(220, 53, 69);
-  doc.setTextColor(255, 255, 255);
-  colunas.forEach((t, i) => {
-    doc.rect(margem + i * largura, y, largura, 10, "F");
-    doc.text(t, margem + i * largura + 2, y + 7);
+  produtosShopee.forEach((p, i) => {
+    tbodyShopee.innerHTML += `
+      <tr>
+        <td>${p.nome}</td><td>${p.codigo}</td><td>R$ ${p.valorSobra}</td>
+        <td>R$ ${p.preco}</td><td>R$ ${p.lucro}</td>
+        <td><button onclick="excluirProduto('shopee', ${i})">🗑</button></td>
+      </tr>`;
   });
 
-  y += 12;
-  doc.setTextColor(0, 0, 0);
-
-  produtos.forEach((p, i) => {
-    const dados = [
-      p.nome,
-      p.codigo || "-",
-      p.valorSobra,
-      p.precoShopee,
-      p.lucroShopee,
-      p.precoML,
-      p.lucroML
-    ];
-    dados.forEach((dado, j) => {
-      doc.text(`${dado}`, margem + j * largura + 2, y);
-    });
-    y += 8;
-    if (y > 280) {
-      doc.addPage();
-      y = 20;
-    }
+  produtosML.forEach((p, i) => {
+    tbodyML.innerHTML += `
+      <tr>
+        <td>${p.nome}</td><td>${p.codigo}</td><td>R$ ${p.valorSobra}</td>
+        <td>R$ ${p.preco}</td><td>R$ ${p.lucro}</td>
+        <td><button onclick="excluirProduto('ml', ${i})">🗑</button></td>
+      </tr>`;
   });
-
-  doc.save(`produtos_${usuarioAtual}.pdf`);
 }
 
-  if (usuarioAtual) iniciarSistema();
-  function mostrarAba(qual) {
+function excluirProduto(tipo, index) {
+  if (!confirm("Deseja realmente excluir este item?")) return;
+  if (tipo === "shopee") produtosShopee.splice(index, 1);
+  else if (tipo === "ml") produtosML.splice(index, 1);
+  salvarProdutos();
+  renderizarTabelas();
+}
+
+function mostrarAba(qual) {
   document.getElementById("aba-formulario").style.display = "none";
   document.getElementById("aba-tabela").style.display = "none";
   document.getElementById("aba-shopee").style.display = "none";
   document.getElementById("aba-ml").style.display = "none";
 
   if (qual === "formulario") document.getElementById("aba-formulario").style.display = "block";
-  else if (qual === "tabela") document.getElementById("aba-tabela").style.display = "block";
-  else if (qual === "shopee") document.getElementById("aba-shopee").style.display = "block";
-  else if (qual === "ml") document.getElementById("aba-ml").style.display = "block";
+  if (qual === "shopee") document.getElementById("aba-shopee").style.display = "block";
+  if (qual === "ml") document.getElementById("aba-ml").style.display = "block";
 }
+
+if (usuarioAtual) iniciarSistema();
+
 function renderizarTabelaComoTabela() {
   const tbodyShopee = document.getElementById("listaShopee");
   const tbodyML = document.getElementById("listaML");

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Precificador Shopee/ML</title>
-    <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json" />
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
@@ -15,6 +15,7 @@
   <link rel="icon" href="icon-192.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+  <!-- Firebase (Importado via módulo) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -23,7 +24,7 @@
       apiKey: "AIzaSyD3SlnBN8OaF1-tMO1an88u5AIQ0LX-szw",
       authDomain: "precificacao-a323b.firebaseapp.com",
       projectId: "precificacao-a323b",
-      storageBucket: "precificacao-a323b.firebasestorage.app",
+      storageBucket: "precificacao-a323b.appspot.com",
       messagingSenderId: "278826767788",
       appId: "1:278826767788:web:522f0db0304cb990d71609"
     };
@@ -31,24 +32,25 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.salvarNoFirestore = async function(usuario, produtos) {
+    window.salvarNoFirestore = async function(usuario, dados) {
       try {
-        await setDoc(doc(db, "usuarios", usuario), { produtos });
+        await setDoc(doc(db, "usuarios", usuario), dados);
       } catch (e) {
         alert("Erro ao salvar no Firestore: " + e);
       }
-    }
+    };
 
     window.carregarDoFirestore = async function(usuario) {
       try {
         const snap = await getDoc(doc(db, "usuarios", usuario));
-        return snap.exists() ? snap.data().produtos : [];
+        return snap.exists() ? snap.data() : { shopee: [], ml: [] };
       } catch (e) {
         alert("Erro ao carregar do Firestore: " + e);
-        return [];
+        return { shopee: [], ml: [] };
       }
-    }
+    };
   </script>
+
 
   <style>
     :root {
@@ -249,27 +251,34 @@
     </div>
 
    <div class="abas">
-  <button class="aba-btn" onclick="mostrarAba('formulario')">🧮 Precificador</button>
-  <button class="aba-btn" onclick="mostrarAba('tabela')">📋 Lista de Produtos</button>
-</div>
-
-<!-- ABA FORMULÁRIO -->
-<div id="aba-formulario">
-  <div class="form-linha">
-    <div class="campo">
-      <label>Nome do Produto:</label>
-      <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
-    </div>
-    <div class="campo">
-      <label>Cod. do Produto:</label>
-      <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
-    </div>
-    <div class="campo">
-      <label>Valor da Sobra (R$):</label>
-      <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
-    </div>
+    <button class="aba-btn" onclick="mostrarAba('formulario')">🧮 Precificador</button>
+    <button class="aba-btn" onclick="mostrarAba('shopee')">📦 Shopee</button>
+    <button class="aba-btn" onclick="mostrarAba('ml')">📦 Mercado Livre</button>
   </div>
 
+  <div id="aba-shopee" style="display: none">
+    <h2>Lista Shopee</h2>
+    <table class="tabela-produtos">
+      <thead>
+        <tr>
+          <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="listaShopee"></tbody>
+    </table>
+  </div>
+
+  <div id="aba-ml" style="display: none">
+    <h2>Lista Mercado Livre</h2>
+    <table class="tabela-produtos">
+      <thead>
+        <tr>
+          <th>Produto</th><th>Código</th><th>Sobra</th><th>Preço</th><th>Lucro</th><th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="listaML"></tbody>
+    </table>
+  </div>
   <fieldset>
     <legend>Shopee</legend>
     <div class="form-grid">
@@ -519,30 +528,36 @@ function calcularSalvar() {
 
   if (usuarioAtual) iniciarSistema();
   function mostrarAba(qual) {
-  document.getElementById("aba-formulario").style.display = qual === "formulario" ? "block" : "none";
-  document.getElementById("aba-tabela").style.display = qual === "tabela" ? "block" : "none";
-  if (qual === "tabela") renderizarTabelaComoTabela();
-}
+  document.getElementById("aba-formulario").style.display = "none";
+  document.getElementById("aba-tabela").style.display = "none";
+  document.getElementById("aba-shopee").style.display = "none";
+  document.getElementById("aba-ml").style.display = "none";
 
+  if (qual === "formulario") document.getElementById("aba-formulario").style.display = "block";
+  else if (qual === "tabela") document.getElementById("aba-tabela").style.display = "block";
+  else if (qual === "shopee") document.getElementById("aba-shopee").style.display = "block";
+  else if (qual === "ml") document.getElementById("aba-ml").style.display = "block";
+}
 function renderizarTabelaComoTabela() {
-  const tbody = document.getElementById("tabelaProdutos");
-  tbody.innerHTML = "";
+  const tbodyShopee = document.getElementById("listaShopee");
+  const tbodyML = document.getElementById("listaML");
+  tbodyShopee.innerHTML = "";
+  tbodyML.innerHTML = "";
+
   produtos.forEach((p, i) => {
-    tbody.innerHTML += `
+    tbodyShopee.innerHTML += `
       <tr>
-        <td>${p.nome}</td>
-        <td>${p.codigo || "-"}</td>
-        <td>R$ ${p.valorSobra}</td>
-        <td>R$ ${p.precoShopee}</td>
-        <td>R$ ${p.lucroShopee}</td>
-        <td>R$ ${p.precoML}</td>
-        <td>R$ ${p.lucroML}</td>
-        <td>
-          <button onclick="editarProduto(${i})"><i class="fas fa-edit"></i></button>
-          <button onclick="excluirProduto(${i})"><i class="fas fa-trash"></i></button>
-        </td>
-      </tr>
-    `;
+        <td>${p.nome}</td><td>${p.codigo}</td><td>${p.valorSobra}</td>
+        <td>${p.precoShopee}</td><td>${p.lucroShopee}</td>
+        <td><button onclick="editarProduto(${i})">✏️</button> <button onclick="excluirProduto(${i})">🗑</button></td>
+      </tr>`;
+
+    tbodyML.innerHTML += `
+      <tr>
+        <td>${p.nome}</td><td>${p.codigo}</td><td>${p.valorSobra}</td>
+        <td>${p.precoML}</td><td>${p.lucroML}</td>
+        <td><button onclick="editarProduto(${i})">✏️</button> <button onclick="excluirProduto(${i})">🗑</button></td>
+      </tr>`;
   });
 }
 

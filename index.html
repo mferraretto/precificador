@@ -179,6 +179,24 @@
   justify-content: space-between;
   margin-top: 10px;
 }
+.form-linha {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.form-linha .campo {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+}
+.acoes-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
 
   </style>
 </head>
@@ -205,15 +223,20 @@
       </div>
     </div>
 
+    <div class="form-linha">
+  <div class="campo">
+    <label>Cod. do Produto:</label>
+    <input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
+  </div>
+    <div class="campo">
     <label>Nome do Produto:</label>
-<input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
-
-<label>Cod. do Produto:</label>
-<input type="text" id="codigoProduto" placeholder="Ex: CAN1234" />
-
-<label>Valor da Sobra (R$):</label>
-<input type="text" id="valorSobra" placeholder="Ex: 5.75" />
-
+    <input type="text" id="nomeProduto" placeholder="Ex: Caneca Personalizada" />
+  </div>
+  <div class="campo">
+    <label>Valor da Sobra (R$):</label>
+    <input type="text" id="valorSobra" placeholder="Ex: 5.75" />
+  </div>
+</div>
     <fieldset>
       <legend>Shopee</legend>
       <div class="form-grid">
@@ -242,9 +265,12 @@
       </div>
     </fieldset>
 
-    <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
-    <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-    <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+   <div class="acoes-botoes">
+  <button onclick="calcularSalvar()"><i class="fas fa-save"></i> Calcular e Salvar</button>
+  <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+  <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+</div>
+
 
     <div class="produtos-grid" id="produtosGrid"></div>
   </div>

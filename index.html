@@ -466,16 +466,21 @@ function calcularSalvar() {
   const lucroML = (precoML - sobra).toFixed(2);
 
   const produtoShopee = {
-  nome, codigo, valorSobra: sobra.toFixed(2),
+  nome, codigo,
   preco: precoShopee,
-  lucro: lucroShopee,
   taxa: taxaShopee.toFixed(2),
-  comissao: (comissaoShopee * 100).toFixed(2)
+  comissao: (comissaoShopee * 100).toFixed(2),
+  valorSobra: sobra.toFixed(2),
+  lucro: lucroShopee
 };
 
+
   const produtoML = {
-    nome, codigo, valorSobra: sobra.toFixed(2),
+    nome, codigo,
     preco: precoML,
+    taxa: taxaML.toFixed(2),
+    comissao: (comissaoML * 100).toFixed(2),
+  valorSobra: sobra.toFixed(2),
     lucro: lucroML
   };
 
@@ -501,8 +506,13 @@ function renderizarTabelas() {
   produtosShopee.forEach((p, i) => {
     tbodyShopee.innerHTML += `
       <tr>
-        <td>${p.nome}</td><td>${p.codigo}</td><td>R$ ${p.valorSobra}</td>
-        <td>R$ ${p.preco}</td><td>R$ ${p.lucro}</td>
+        <td>${p.codigo}</td>
+        <td>${p.nome}</td>
+        <td>R$ ${p.preco}</td>
+        <td>R$ ${p.taxa}</td>
+        <td>${p.comissao}%</td>
+        <td>R$ ${p.valorSobra}</td>
+        <td>R$ ${p.lucro}</td>
         <td><button onclick="excluirProduto('shopee', ${i})">🗑</button></td>
       </tr>`;
   });
@@ -510,12 +520,18 @@ function renderizarTabelas() {
   produtosML.forEach((p, i) => {
     tbodyML.innerHTML += `
       <tr>
-        <td>${p.nome}</td><td>${p.codigo}</td><td>R$ ${p.valorSobra}</td>
-        <td>R$ ${p.preco}</td><td>R$ ${p.lucro}</td>
+        <td>${p.codigo}</td>
+        <td>${p.nome}</td>
+        <td>R$ ${p.preco}</td>
+        <td>R$ ${p.taxa}</td>
+        <td>${p.comissao}%</td>
+        <td>R$ ${p.valorSobra}</td>
+        <td>R$ ${p.lucro}</td>
         <td><button onclick="excluirProduto('ml', ${i})">🗑</button></td>
       </tr>`;
   });
 }
+
 
 function excluirProduto(tipo, index) {
   if (!confirm("Deseja realmente excluir este item?")) return;
